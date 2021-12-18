@@ -28,12 +28,12 @@ namespace InterviewApi.Controllers
         public ActionResult<IEnumerable<IncidentDto>> Get()
         {
             var models = _repository.GetAll().Select(p => IncidentDto.FromModel(p));
-            if (models is null) return NoContent();
+            if(!models.Any()) return NotFound("list of Incident is empty.");
             return Ok(models);
         }
 
         
-        [HttpGet("{name}")]
+        [HttpGet("{name}",Name = "Get")]
         public ActionResult<IncidentDto> Get(string name)
         {
             var model = _repository.GetByName(name);

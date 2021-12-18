@@ -27,12 +27,12 @@ namespace InterviewApi.Controllers
         public ActionResult<IEnumerable<ContactDto>> Get()
         {
             var models = _repository.GetAll().Select(p => ContactDto.FromModel(p));
-            if (models is null) return NoContent();
+            if (!models.Any()) return NotFound("list of Contact is empty.");
             return Ok(models);
         }
 
-        
-        [HttpGet("{id}")]
+
+        [HttpGet("{id}", Name = "Get")]
         public ActionResult<ContactDto> Get(int id)
         {
             var model = _repository.GetById(id);

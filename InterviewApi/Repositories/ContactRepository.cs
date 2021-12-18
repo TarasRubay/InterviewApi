@@ -21,6 +21,11 @@ namespace InterviewApi.Repositories
 
         public Contact Create(Contact entity)
         {
+            if (entity is null)
+                throw new ArgumentNullException(nameof(entity));
+
+            if (_context.Contacts.Any(c => c.Email == entity.Email))
+                throw new ArgumentException("Email is already exists in the database");
             _context.Contacts.Add(entity);
             _context.SaveChanges();
             return entity;

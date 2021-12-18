@@ -21,6 +21,7 @@ namespace InterviewApi.Repositories
 
         public Incident Create(Incident entity)
         {
+
             _context.Incidents.Add(entity);
             _context.SaveChanges();
             return entity;
