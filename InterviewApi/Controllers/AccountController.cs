@@ -25,22 +25,25 @@ namespace InterviewApi.Controllers
 
         }
        
-        // GET: api/<AccountController>
+       
         [HttpGet]
         public ActionResult<IEnumerable<AccountDto>> Get()
         {
             var models = _repository.GetAll().Select(p => AccountDto.FromModel(p));
+            if (models is null) return NoContent();
             return Ok(models);
         }
 
-        // GET api/<AccountController>/5
+        
         [HttpGet("{id}")]
-        public string Get(int id)
+        public ActionResult<AccountDto> Get(int id)
         {
-            return "value";
+            var model = _repository.GetById(id);
+            if (model is null) return NotFound($"No found account id = {id}");
+            return Ok(AccountDto.FromModel(model));
         }
 
-        // POST api/<AccountController>
+        
         [HttpPost]
         public ActionResult<AccountDto> Post([FromBody] AccountDtoCreate accountDtoCreate)
         {
@@ -55,19 +58,9 @@ namespace InterviewApi.Controllers
                 }).ToList()
             });
             
-            return Ok();
+            return CreatedAtRoute(nameof(Get), new { model.Id }, AccountDto.FromModel(model)); ;
         }
 
-        // PUT api/<AccountController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<AccountController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+      
     }
 }

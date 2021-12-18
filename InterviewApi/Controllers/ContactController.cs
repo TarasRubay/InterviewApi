@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using InterviewApi.Dtos;
+using InterviewApi.Model;
+using InterviewApi.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace InterviewApi.Controllers
 {
@@ -12,36 +13,47 @@ namespace InterviewApi.Controllers
     [ApiController]
     public class ContactController : ControllerBase
     {
-        // GET: api/<ContactController>
+        private readonly ContactRepository _repository;
+
+
+        public ContactController(ContactRepository contactrepository)
+        {
+            _repository = contactrepository;
+
+        }
+
+      
         [HttpGet]
-        public IEnumerable<string> Get()
+        public ActionResult<IEnumerable<ContactDto>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var models = _repository.GetAll().Select(p => ContactDto.FromModel(p));
+            if (models is null) return NoContent();
+            return Ok(models);
         }
 
-        // GET api/<ContactController>/5
+        
         [HttpGet("{id}")]
-        public string Get(int id)
+        public ActionResult<ContactDto> Get(int id)
         {
-            return "value";
+            var model = _repository.GetById(id);
+            if (model is null) return NotFound($"No found contact id = {id}");
+            return Ok(ContactDto.FromModel(model));
         }
 
-        // POST api/<ContactController>
+        
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ActionResult<ContactDto> Post([FromBody] ContactDtoCreate contactDtoCreate)
         {
+            var model = _repository.Create(new Contact()
+            {
+                Email = contactDtoCreate.Email,
+                FirstName = contactDtoCreate.FirstName,
+                LastName = contactDtoCreate.LastName
+            }
+            );
+
+            return CreatedAtRoute(nameof(Get), new { model.Id }, ContactDto.FromModel(model)); ;
         }
 
-        // PUT api/<ContactController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<ContactController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using InterviewApi.Dtos;
+using InterviewApi.Model;
+using InterviewApi.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace InterviewApi.Controllers
 {
@@ -12,36 +14,46 @@ namespace InterviewApi.Controllers
     [ApiController]
     public class IncidentController : ControllerBase
     {
-        // GET: api/<IncidentController>
+        private readonly IncidentRepository _repository;
+
+
+        public IncidentController(IncidentRepository incidentrepository)
+        {
+            _repository = incidentrepository;
+
+        }
+
+        
         [HttpGet]
-        public IEnumerable<string> Get()
+        public ActionResult<IEnumerable<IncidentDto>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var models = _repository.GetAll().Select(p => IncidentDto.FromModel(p));
+            if (models is null) return NoContent();
+            return Ok(models);
         }
 
-        // GET api/<IncidentController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        
+        [HttpGet("{name}")]
+        public ActionResult<IncidentDto> Get(string name)
         {
-            return "value";
+            var model = _repository.GetByName(name);
+            if (model is null) return NotFound($"No found incedent name = {name}");
+            return Ok(IncidentDto.FromModel(model));
         }
 
-        // POST api/<IncidentController>
+       
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ActionResult<IncidentDto> Post([FromBody] IncidentDtoCreate incidentDtoCreate)
         {
+            var model = _repository.Create(new Incident()
+            {
+                Description = incidentDtoCreate.Description
+               
+            }
+            );
+
+            return CreatedAtRoute(nameof(Get), new { model.Name }, IncidentDto.FromModel(model)); ;
         }
 
-        // PUT api/<IncidentController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<IncidentController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

@@ -33,17 +33,8 @@ namespace InterviewApi.Repositories
 
         public Account GetById(int id)
         {
-            throw new NotImplementedException();
+            return _context.Accounts.Where(p => p.Id == id).FirstOrDefault();
         }
 
-        public void Remove(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(Account entity)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

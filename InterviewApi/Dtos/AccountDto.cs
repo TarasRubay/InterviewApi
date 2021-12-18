@@ -16,9 +16,7 @@ namespace InterviewApi.Dtos
       
         public string IncidentName { get; set; }
 
-        //public Incident Incident { get; set; }
-
-        //public IEnumerable<Contact> Contacts { get; set; }
+       
         public Account ToModel()
         {
             return new()
