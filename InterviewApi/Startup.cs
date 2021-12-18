@@ -1,4 +1,5 @@
 using InterviewApi.DataContex;
+using InterviewApi.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,15 +29,19 @@ namespace InterviewApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<TableContex>(options =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConection"));
-            });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "InterviewApi", Version = "v1" });
             });
+            services.AddDbContext<TableContex>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConection"));
+            });
+            
+            services.AddScoped<AccountRepository>();
+            services.AddScoped<ContactRepository>();
+            services.AddScoped<IncidentRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

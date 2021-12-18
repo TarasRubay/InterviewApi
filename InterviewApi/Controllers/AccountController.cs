@@ -1,4 +1,6 @@
-﻿using InterviewApi.Dtos;
+﻿using AutoMapper;
+using InterviewApi.DataContex;
+using InterviewApi.Dtos;
 using InterviewApi.Model;
 using InterviewApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -15,15 +17,20 @@ namespace InterviewApi.Controllers
     public class AccountController : ControllerBase
     {
         private readonly AccountRepository _repository;
-        public AccountController(AccountRepository accountRepository)
+       
+        
+        public AccountController(AccountRepository accountrepository)
         {
-            _repository = accountRepository;
+            _repository = accountrepository;
+
         }
+       
         // GET: api/<AccountController>
         [HttpGet]
-        public IEnumerable<AccountDto> Get()
+        public ActionResult<IEnumerable<AccountDto>> Get()
         {
-            return Ok(_repository.GetAccounts().Select(p => AccountDto.FromModel(p))) as IEnumerable<AccountDto>;
+            var models = _repository.GetAll().Select(p => AccountDto.FromModel(p));
+            return Ok(models);
         }
 
         // GET api/<AccountController>/5
@@ -35,8 +42,20 @@ namespace InterviewApi.Controllers
 
         // POST api/<AccountController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ActionResult<AccountDto> Post([FromBody] AccountDtoCreate accountDtoCreate)
         {
+            var model = _repository.Create(new Account
+            {
+                Name = accountDtoCreate.Name,
+                Contacts = accountDtoCreate.Contacts.Select(it => new Contact()
+                {  
+                    Email = it.Email,
+                    FirstName = it.FirstName,
+                    LastName = it.LastName,
+                }).ToList()
+            });
+            
+            return Ok();
         }
 
         // PUT api/<AccountController>/5
