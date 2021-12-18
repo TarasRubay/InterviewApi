@@ -23,30 +23,17 @@ namespace InterviewApi.Dtos
        
         public int? AccountId { get; set; }
 
-        public Account Account { get; set; }
-        public Contact ToModel()
-        {
-            return new()
-            {
-                Id = Id,
-                Email = Email,
-                FirstName = FirstName,
-                LastName = LastName,
-                AccountId = AccountId,
-                Account = Account
-            };
-        }
         public static ContactDto FromModel(Contact it)
         {
             return new()
             {
-                    Id = it.Id,
-                    Email = it.Email,
-                    FirstName = it.FirstName,
-                    LastName = it.LastName,
-                    AccountId = it.AccountId,
-                    Account = it.Account
+               
+                Email = it.Email,
+                FirstName = it.FirstName,
+                LastName = it.LastName,
+                AccountId = it.AccountId
+               
             };
-        }
+       }
     }
 }

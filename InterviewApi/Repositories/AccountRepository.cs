@@ -1,4 +1,5 @@
-﻿using InterviewApi.Model;
+﻿using InterviewApi.DataContex;
+using InterviewApi.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,24 +7,43 @@ using System.Threading.Tasks;
 
 namespace InterviewApi.Repositories
 {
-    public class AccountRepository
+    public class AccountRepository : IRepository<Account>
     {
-        private readonly IRepository<Account> _accountRepository;
-        private readonly IRepository<Contact> _contactRepository;
-        private readonly IRepository<Incident> _incedentRepository;
+        private readonly TableContex _context;
+       
+        
         public AccountRepository() { }
-        public AccountRepository(
-            IRepository<Account> accountRepository,
-            IRepository<Contact> contactRepository,
-            IRepository<Incident> incedentRepository)
+        public AccountRepository(TableContex context)
         {
-            _accountRepository = accountRepository;
-            _contactRepository = contactRepository;
-            _incedentRepository = incedentRepository;
+            _context = context;    
         }
-        public virtual IEnumerable<Account> GetAccounts()
+
+        public Account Create(Account entity)
         {
-            return _accountRepository.GetAll();
+            if (entity is null)
+                throw new ArgumentNullException(nameof(entity));
+
+            if (_context.Accounts.Any(a => a.Name == entity.Name))
+                throw new ArgumentException("Name must be unique");
+
+            if (entity.Contacts.Any(x => _context.Contacts.Any(y => y.Email == x.Email)))
+                throw new ArgumentException("Email is already exists in the database");
+
+            _context.Accounts.Add(entity);
+            _context.SaveChanges();
+            return entity;
+
         }
+
+        public IEnumerable<Account> GetAll()
+        {
+            return _context.Accounts;
+        }
+
+        public Account GetById(int id)
+        {
+            return _context.Accounts.Where(p => p.Id == id).FirstOrDefault();
+        }
+
     }
 }

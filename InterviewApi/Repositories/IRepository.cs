@@ -13,8 +13,6 @@ namespace InterviewApi.Repositories
 
         TEntity Create(TEntity entity);
 
-        void Update(TEntity entity);
-
-        void Remove(int id);
+       
     }
 }
