@@ -32,7 +32,8 @@ namespace InterviewApi.Controllers
         }
 
 
-        [HttpGet("{id}", Name = "Get")]
+        //[HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}")]
         public ActionResult<ContactDto> Get(int id)
         {
             var model = _repository.GetById(id);
@@ -52,7 +53,9 @@ namespace InterviewApi.Controllers
             }
             );
 
-            return CreatedAtRoute(nameof(Get), new { model.Id }, ContactDto.FromModel(model)); ;
+            var mod = _repository.GetAll().Where(p => p.Email == model.Email).FirstOrDefault();
+            if (mod is null) return NotFound($"no saved contact");
+            return Ok(ContactDto.FromModel(mod));
         }
 
     }

@@ -36,7 +36,8 @@ namespace InterviewApi.Controllers
         }
 
         
-        [HttpGet("{id}", Name = "Get")]
+        //[HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}")]
         public ActionResult<AccountDto> Get(int id)
         {
             var model = _repository.GetById(id);
@@ -58,8 +59,10 @@ namespace InterviewApi.Controllers
                     LastName = it.LastName,
                 }).ToList()
             });
-            
-            return CreatedAtRoute(nameof(Get), new { model.Id }, AccountDto.FromModel(model)); ;
+
+            var mod = _repository.GetAll().Where(p => p.Name == model.Name).FirstOrDefault();
+            if (model is null) return NotFound($"no saved account");
+            return Ok(AccountDto.FromModel(model));
         }
 
       

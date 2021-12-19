@@ -32,8 +32,9 @@ namespace InterviewApi.Controllers
             return Ok(models);
         }
 
-        
-        [HttpGet("{name}",Name = "Get")]
+
+        //[HttpGet("{name}",Name = "Get")]
+        [HttpGet("{name}")]
         public ActionResult<IncidentDto> Get(string name)
         {
             var model = _repository.GetByName(name);
@@ -52,7 +53,9 @@ namespace InterviewApi.Controllers
             }
             );
 
-            return CreatedAtRoute(nameof(Get), new { model.Name }, IncidentDto.FromModel(model)); ;
+            var mod = _repository.GetByName(model.Name);
+            if (mod is null) return NotFound($"No found incedent name = {model.Name}");
+            return Ok(IncidentDto.FromModel(model));
         }
 
     }

@@ -21,6 +21,7 @@ namespace InterviewApi.Repositories
 
         public Incident Create(Incident entity)
         {
+            if(entity is null) throw new ArgumentNullException(nameof(entity));
 
             _context.Incidents.Add(entity);
             _context.SaveChanges();
