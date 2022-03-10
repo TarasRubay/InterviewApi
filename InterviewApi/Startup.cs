@@ -34,10 +34,10 @@ namespace InterviewApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "InterviewApi", Version = "v1" });
             });
-            services.AddDbContext<TableContex>(options =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConection"));
-            });
+            //services.AddDbContext<TableContex>(options =>
+            //{
+            //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConection"));
+            //});
             
             services.AddScoped<AccountRepository>();
             services.AddScoped<ContactRepository>();
